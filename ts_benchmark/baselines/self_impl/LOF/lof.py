@@ -72,7 +72,8 @@ class LOF:
         :param X: The data of the score to be calculated.
         :return: Anomaly score array.
         """
-        X = X.values.reshape(-1, 1)
+        # keep one sample per timestamp: (T, D) with channels as features
+        X = X.values
 
         self.detector_ = LocalOutlierFactor(
             n_neighbors=self.n_neighbors,
@@ -102,7 +103,8 @@ class LOF:
         :param X: The data to be tested.
         :return: Anomaly label array.
         """
-        X = X.values.reshape(-1, 1)
+        # keep one sample per timestamp: (T, D) with channels as features
+        X = X.values
 
         self.detector_ = LocalOutlierFactor(
             n_neighbors=self.n_neighbors,
