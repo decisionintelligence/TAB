@@ -971,7 +971,7 @@ class UniTS(nn.Module):
         pretrain_weight_path = "ts_benchmark/baselines/pre_train/checkpoints/units/units_x32_pretrain_checkpoint.pth"
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        state_dict = torch.load(pretrain_weight_path, map_location=device)['student']
+        state_dict = torch.load(pretrain_weight_path, map_location=device, weights_only=False)['student']
         ckpt = {}
         for k, v in state_dict.items():
             if not ('cls_prompts' in k):
