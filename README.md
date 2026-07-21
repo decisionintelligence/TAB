@@ -1,6 +1,6 @@
 # TAB: Unified Benchmarking of Time Series Anomaly Detection Methods
 
-[![PVLDB](https://img.shields.io/badge/PVLDB'25-TAB-orange)](https://arxiv.org/pdf/2403.20150.pdf)  [![Python](https://img.shields.io/badge/Python-3.12-blue)](https://www.python.org/)  [![PyTorch](https://img.shields.io/badge/PyTorch-2.4.1-blue)](https://pytorch.org/)  ![Stars](https://img.shields.io/github/stars/decisionintelligence/TAB)  
+[![PVLDB](https://img.shields.io/badge/PVLDB'25-TAB-orange)](https://arxiv.org/pdf/2403.20150.pdf)  [![Python](https://img.shields.io/badge/Python-3.12-blue)](https://www.python.org/)  [![PyTorch](https://img.shields.io/badge/PyTorch-2.4.1-blue)](https://pytorch.org/)  ![Stars](https://img.shields.io/github/stars/decisionintelligence/TAB)
 
 
 > [!IMPORTANT]
@@ -74,7 +74,7 @@ pip install -r requirements.txt
 >
 > All baseline families work on Python 3.12, including TODS and Merlion:
 >
-> - The TODS baselines (`tods.hbosski`, `tods.lofski`, ...) are implemented directly on top of `pyod` — same algorithms, same defaults, no dependency on the abandoned `d3m` ecosystem. Results are statistically equivalent to (but may differ in the last decimals from) the historical d3m-based implementation, which is kept under `ts_benchmark/baselines/tods/third_party` for Python 3.8 reproduction (see `requirements-optional.txt`). The only unavailable model is `tods.lstmodetectorski` (TensorFlow model internal to TODS, unused by the benchmark scripts).
+> - The TODS baselines (`tods.hbosski`, `tods.lofski`, ...) are implemented directly on top of `pyod` — same algorithms, with the default hyperparameters of the historical d3m primitives injected explicitly, and no dependency on the abandoned `d3m` ecosystem. Because the underlying pyod version is newer than the one frozen by d3m in 2022, individual scores may differ slightly from historical runs (validated: 7 of 9 finite AUC-ROC values reproduced within 0.001 of published results on real datasets, remaining deviations shown to pre-date this implementation). The original d3m-based implementation is kept under `ts_benchmark/baselines/tods/third_party` for Python 3.8 reproduction (see `requirements-optional.txt`). The only unavailable model is `tods.lstmodetectorski` (TensorFlow model internal to TODS, unused by the benchmark scripts).
 > - The Merlion baselines (`merlion.IsolationForest`, ...) use `salesforce-merlion`, installed from `requirements.txt`. `merlion.RandomCutForest` additionally requires a Java runtime (Java 8+).
 
 2. Data preparation

@@ -22,9 +22,9 @@ from .utility import get_sub_matrices
 
 class PCA(CollectiveBaseDetector):
     """PCA-based outlier detection with both univariate and multivariate
-    time series data. TS data will be first transformed to tabular format. 
+    time series data. TS data will be first transformed to tabular format.
     For univariate data, it will be in shape of [valid_length, window_size].
-    for multivariate data with d sequences, it will be in the shape of 
+    for multivariate data with d sequences, it will be in the shape of
     [valid_length, window_size].
 
     Parameters
@@ -114,7 +114,7 @@ class PCA(CollectiveBaseDetector):
         If True, perform standardization first to convert
         data to zero mean and unit variance.
         See http://scikit-learn.org/stable/auto_examples/preprocessing/plot_scaling_importance.html
-        
+
     Attributes
     ----------
     decision_scores_ : numpy array of shape (n_samples,)

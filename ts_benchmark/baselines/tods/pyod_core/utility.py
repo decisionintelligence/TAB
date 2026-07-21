@@ -57,19 +57,19 @@ def get_sub_matrices(X, window_size, step=1, return_numpy=True, flatten=True,
 
     step_size : int, optional (default=1)
         The displacement for moving window.
-    
+
     return_numpy : bool, optional (default=True)
         If True, return the data format in 3d numpy array.
 
     flatten : bool, optional (default=True)
         If True, flatten the returned array in 2d.
-        
+
     flatten_order : str, optional (default='F')
         Decide the order of the flatten for multivarite sequences.
-        ‘C’ means to flatten in row-major (C-style) order. 
-        ‘F’ means to flatten in column-major (Fortran- style) order. 
-        ‘A’ means to flatten in column-major order if a is Fortran contiguous in memory, 
-        row-major order otherwise. ‘K’ means to flatten a in the order the elements occur in memory. 
+        ‘C’ means to flatten in row-major (C-style) order.
+        ‘F’ means to flatten in column-major (Fortran- style) order.
+        ‘A’ means to flatten in column-major order if a is Fortran contiguous in memory,
+        row-major order otherwise. ‘K’ means to flatten a in the order the elements occur in memory.
         The default is ‘F’.
 
     Returns
@@ -138,7 +138,7 @@ def get_sub_sequences_length(n_samples, window_size, step):
     -------
     valid_len : int
         The number of subsequences.
-        
+
     """
     # if X.shape[0] == 1:
     #     n_samples = X.shape[1]
@@ -148,7 +148,7 @@ def get_sub_sequences_length(n_samples, window_size, step):
     #     raise ValueError("X is not a univarite series. The shape is {shape}.".format(shape=X.shape))
 
     # valid_len = n_samples - window_size + 1
-    # valida_len = int_down(n_samples-window_size)/step + 1 
+    # valida_len = int_down(n_samples-window_size)/step + 1
     valid_len = int(np.floor((n_samples - window_size) / step)) + 1
     return valid_len
 

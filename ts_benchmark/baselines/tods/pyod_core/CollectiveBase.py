@@ -258,7 +258,7 @@ class CollectiveBaseDetector(metaclass=ABCMeta):
 
         check_is_fitted(self, ['decision_scores_', 'threshold_', 'labels_'])
         train_scores = self.decision_scores_
-        
+
         test_scores, X_left_inds, X_right_inds = self.decision_function(X)
 
         probs = np.zeros([test_scores.shape[0], int(self._classes)])
