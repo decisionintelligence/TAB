@@ -26,7 +26,7 @@ def seasonal_shift(
 
     xlen = int(np.ceil(multi * x.shape[0]))
     print("xlen is", xlen)
-    a = np.complex(0 + 0j)
+    a = np.complex128(0 + 0j)
     fft_yn_new = a * np.arange(xlen)
 
     if multi < 1:
@@ -59,7 +59,7 @@ def with_noise(
     flag = np.random.randint(low=0, high=2)
     xn = x.numpy()
     fft_yn = fft(xn - np.mean(xn))
-    a = np.complex(0 + 0j)
+    a = np.complex128(0 + 0j)
     fft_yn_new = a * np.arange(x.shape[0])
 
     prop = np.random.uniform(0.01, 0.5)
@@ -98,7 +98,7 @@ def other_fftshift(
     flag = np.random.randint(low=0, high=4)
     xn = x.numpy()
     fft_yn = fft(xn - np.mean(xn))
-    a = np.complex(0 + 0j)
+    a = np.complex128(0 + 0j)
     fft_yn_new = a * np.arange(x.shape[0])
 
     prop = np.random.uniform(0.01, 0.25)

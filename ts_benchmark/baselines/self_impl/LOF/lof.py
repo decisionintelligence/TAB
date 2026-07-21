@@ -93,7 +93,7 @@ class LOF:
             .fit_transform(self.decision_scores_.reshape(-1, 1))
             .ravel()
         )
-        return score
+        return score, score
 
     def detect_label(self, X: pd.DataFrame) -> np.ndarray:
         """
@@ -123,7 +123,8 @@ class LOF:
             .fit_transform(self.decision_scores_.reshape(-1, 1))
             .ravel()
         )
-        return score
+        preds = (score > np.percentile(score, 100 * (1 - self.contamination))).astype(int)
+        return preds, score
 
     def __repr__(self) -> str:
         """
