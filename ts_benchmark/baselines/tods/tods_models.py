@@ -46,6 +46,123 @@ class PCAODetector(_WindowPCA):
         super().__init__(window_size=window_size, **kwargs)
 
 
+# Default hyperparameters of the historical d3m primitives (tods/detection_algorithm/*.py,
+# `Hyperparams` classes). They are injected explicitly because some of them differ from
+# the defaults of current pyod versions (e.g. HBOS tol, COF n_neighbors, PCA whiten).
+# User-supplied hyperparameters override these values.
+_LEGACY_DEFAULTS = {
+    "IsolationForestSKI": {
+        "n_estimators": 100,
+        "max_samples": "auto",
+        "max_features": 1.0,
+        "bootstrap": False,
+        "behaviour": "new",
+        "contamination": 0.1,
+    },
+    "KNNSKI": {
+        "n_neighbors": 5,
+        "method": "largest",
+        "radius": 1.0,
+        "algorithm": "auto",
+        "leaf_size": 30,
+        "metric": "minkowski",
+        "p": 2,
+        "contamination": 0.1,
+    },
+    "AutoEncoderSKI": {
+        # translated to the current pyod (torch-based) AutoEncoder API
+        "hidden_neuron_list": [1, 4, 1],
+        "epoch_num": 20,
+        "batch_size": 32,
+        "dropout_rate": 0.2,
+        "preprocessing": True,
+        "optimizer_params": {"weight_decay": 0.1},
+        "contamination": 0.01,
+    },
+    "LOFSKI": {
+        "n_neighbors": 20,
+        "leaf_size": 30,
+        "metric": "minkowski",
+        "p": 2,
+        "contamination": 0.1,
+    },
+    "OCSVMSKI": {
+        "kernel": "rbf",
+        "nu": 0.5,
+        "degree": 3,
+        "gamma": "auto",
+        "coef0": 0.0,
+        "shrinking": True,
+        "contamination": 0.1,
+    },
+    "HBOSSKI": {
+        "n_bins": 10,
+        "alpha": 0.1,
+        "tol": 0.1,
+        "contamination": 0.1,
+    },
+    "LODASKI": {
+        "n_bins": 10,
+        "n_random_cuts": 100,
+        "contamination": 0.1,
+    },
+    "PCAODetectorSKI": {
+        "window_size": 10,
+        "step_size": 1,
+        "n_components": 1,
+        "whiten": True,
+        "standardization": True,
+        "svd_solver": "auto",
+        "contamination": 0.1,
+    },
+    "COFSKI": {
+        "n_neighbors": 5,
+        "contamination": 0.1,
+    },
+    "CBLOFSKI": {
+        "n_clusters": 8,
+        "alpha": 0.9,
+        "beta": 5,
+        "use_weights": False,
+        "contamination": 0.1,
+    },
+}
+
+# Historical AutoEncoder hyperparameter names (keras-based pyod) translated to the
+# current torch-based pyod API, so configs written for the d3m wrappers keep working.
+_AE_LEGACY_PARAM_MAP = {
+    "epochs": "epoch_num",
+    "hidden_neurons": "hidden_neuron_list",
+    "hidden_activation": "hidden_activation_name",
+    "l2_regularizer": None,  # handled below via optimizer_params
+    "validation_size": None,  # no equivalent in the torch implementation
+    "output_activation": None,
+    "loss": None,
+    "optimizer": None,
+    "verbose": "verbose",
+}
+
+
+def _translate_ae_params(params: dict) -> dict:
+    translated = {}
+    for key, value in params.items():
+        if key == "l2_regularizer":
+            translated["optimizer_params"] = {"weight_decay": value}
+        elif key in _AE_LEGACY_PARAM_MAP:
+            new_key = _AE_LEGACY_PARAM_MAP[key]
+            if new_key is None:
+                logger.warning(
+                    "AutoEncoder hyperparameter %r has no equivalent in the current "
+                    "pyod implementation and is ignored.",
+                    key,
+                )
+            else:
+                translated[new_key] = value
+        else:
+            translated[key] = value
+    return translated
+
+
 # [exported name (kept from the original TODS wrappers), model class, required params]
 TODS_MODELS = [
     ["IsolationForestSKI", IForest, {}],
@@ -92,7 +209,11 @@ class TodsModelAdapter:
         :param label: Label data (ignored, unsupervised models).
         :return: The fitted model object.
         """
-        self.model = self.model_class(**self.model_args)
+        user_args = self.model_args
+        if self.model_name == "AutoEncoderSKI":
+            user_args = _translate_ae_params(user_args)
+        args = {**_LEGACY_DEFAULTS.get(self.model_name, {}), **user_args}
+        self.model = self.model_class(**args)
         X = series.values
         self.model.fit(X)
 
