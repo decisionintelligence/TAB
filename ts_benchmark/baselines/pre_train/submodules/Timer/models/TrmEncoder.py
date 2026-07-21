@@ -48,9 +48,9 @@ class Model(nn.Module):
             else:
                 print('loading model: ', self.ckpt_path)
                 if self.ckpt_path.endswith('.pth'):
-                    self.backbone.load_state_dict(torch.load(self.ckpt_path))
+                    self.backbone.load_state_dict(torch.load(self.ckpt_path, weights_only=False))
                 elif self.ckpt_path.endswith('.ckpt'):
-                    sd = torch.load(self.ckpt_path, map_location="cpu")["state_dict"]
+                    sd = torch.load(self.ckpt_path, map_location="cpu", weights_only=False)["state_dict"]
                     sd = {k[6:]: v for k, v in sd.items()}
                     self.backbone.load_state_dict(sd, strict=True)
 

@@ -72,7 +72,8 @@ class LOF:
         :param X: The data of the score to be calculated.
         :return: Anomaly score array.
         """
-        X = X.values.reshape(-1, 1)
+        # keep one sample per timestamp: (T, D) with channels as features
+        X = X.values
 
         self.detector_ = LocalOutlierFactor(
             n_neighbors=self.n_neighbors,
@@ -93,7 +94,7 @@ class LOF:
             .fit_transform(self.decision_scores_.reshape(-1, 1))
             .ravel()
         )
-        return score
+        return score, score
 
     def detect_label(self, X: pd.DataFrame) -> np.ndarray:
         """
@@ -102,7 +103,8 @@ class LOF:
         :param X: The data to be tested.
         :return: Anomaly label array.
         """
-        X = X.values.reshape(-1, 1)
+        # keep one sample per timestamp: (T, D) with channels as features
+        X = X.values
 
         self.detector_ = LocalOutlierFactor(
             n_neighbors=self.n_neighbors,
@@ -123,7 +125,8 @@ class LOF:
             .fit_transform(self.decision_scores_.reshape(-1, 1))
             .ravel()
         )
-        return score
+        preds = (score > np.percentile(score, 100 * (1 - self.contamination))).astype(int)
+        return preds, score
 
     def __repr__(self) -> str:
         """
