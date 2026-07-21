@@ -40,6 +40,51 @@ from merlion.models.anomaly.forecast_based.mses import MSESDetector, MSESDetecto
 from sklearn.preprocessing import StandardScaler
 
 
+def _install_java8_gateway_fallback() -> None:
+    """
+    Merlion launches the RandomCutForest JVM with ``--add-opens`` options that only
+    exist on Java 9+; on Java 8 the JVM refuses to start and py4j fails with
+    ``ValueError: invalid literal for int()``. Those options are unnecessary on
+    Java 8 (no module system), so retry without them when the launch fails.
+    """
+    from os.path import abspath, dirname, join
+    from os import pathsep
+
+    from py4j.java_gateway import JavaGateway
+    import merlion.models.anomaly.random_cut_forest as rcf_module
+
+    @classmethod
+    def gateway(cls):
+        if cls._gateway is None:
+            resource_dir = join(
+                dirname(dirname(dirname(abspath(rcf_module.__file__)))), "resources"
+            )
+            jars = [
+                "gson-2.8.9.jar",
+                "randomcutforest-core-1.0.jar",
+                "randomcutforest-serialization-json-1.0.jar",
+            ]
+            classpath = pathsep.join(join(resource_dir, jar) for jar in jars)
+            javaopts = [
+                "--add-opens=java.base/java.util=ALL-UNNAMED",
+                "--add-opens=java.base/java.nio=ALL-UNNAMED",
+            ]
+            try:
+                cls._gateway = JavaGateway.launch_gateway(
+                    classpath=classpath, javaopts=javaopts
+                )
+            except ValueError:
+                cls._gateway = JavaGateway.launch_gateway(
+                    classpath=classpath, javaopts=[]
+                )
+        return cls._gateway
+
+    rcf_module.JVMSingleton.gateway = gateway
+
+
+_install_java8_gateway_fallback()
+
+
 class MerlionModelAdapter:
     """
     Merlion model adapter class, used to adapt models in the Merlion framework to meet the requirements of prediction strategies.
