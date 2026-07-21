@@ -17,7 +17,9 @@ lightgbm>=4.1.0
 PyWavelets>=1.4
 torch>=2.1
 timm
-transformers
+# LLM baselines (CALF, GPT4TS, ...) vendor GPT-2 forward code written against the
+# transformers 4.x API (GenerationMixin on base models, get_head_mask, ...)
+transformers>=4.40,<4.50
 peft
 pytorch_lightning>=2.0
 tslearn>=0.6.3
