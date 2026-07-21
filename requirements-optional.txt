@@ -1,21 +1,27 @@
-# Legacy dependencies — NOT needed anymore for normal use.
+# Legacy d3m stack for the original TODS wrappers (ts_benchmark/baselines/tods/third_party).
 #
-# The TODS baselines (ts_benchmark/baselines/tods) are now implemented directly
-# on top of pyod (see tods_models.py) and work on Python 3.12. The original
-# implementation went through the abandoned d3m ecosystem, which is stuck on
-# Python 3.8. The packages below are only required if you want to run the
-# original d3m-based wrappers (ts_benchmark/baselines/tods/third_party) in a
-# separate Python 3.8 environment, e.g. to reproduce historical results bit-for-bit:
+# WARNING: Python 3.8 ONLY. Do NOT install this file into the Python 3.12 environment —
+# these packages are incompatible with it and are NOT needed for normal use: the TODS
+# baselines are implemented directly on top of pyod (see tods_models.py) and work on
+# Python 3.12 out of the box.
 #
-# tamu_d3m==2022.05.23
-# nimfa==1.4.0
-# combo
-# tensorflow
+# Install this file in a separate Python 3.8 virtual environment only if you need to
+# run the original d3m-based wrappers, e.g. to reproduce historical results bit-for-bit:
+#   python3.8 -m venv .venv38 && .venv38/bin/pip install -r requirements-optional.txt
 #
-# Note: the only model that still requires this legacy stack is
-# `tods.lstmodetectorski` (TensorFlow LSTM detector internal to TODS,
-# no pyod equivalent). It is not used by any benchmark script.
+# Note: the only model that strictly requires this legacy stack is `tods.lstmodetectorski`
+# (TensorFlow LSTM detector internal to TODS, no pyod equivalent, unused by the
+# benchmark scripts).
 #
-# The Merlion baselines (salesforce-merlion) are installed from requirements.txt
-# and work on Python 3.12. `merlion.RandomCutForest` additionally requires a
-# Java runtime (Java 8+ is supported).
+# `merlion.RandomCutForest` does not need anything from this file, but requires a Java
+# runtime (Java 8+ is supported).
+
+tamu_d3m==2022.05.23
+nimfa==1.4.0
+combo
+tensorflow
+numpy==1.21.0
+numba==0.55.2
+scikit-learn
+pandas
+pyod
