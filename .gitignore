@@ -1,5 +1,7 @@
 dataset/
 result/
+ts_benchmark/baselines/LLM/checkpoints/
+ts_benchmark/baselines/pre_train/checkpoints/
 .idea/
 .vscode/
 .git
